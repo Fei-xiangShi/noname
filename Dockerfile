@@ -12,8 +12,7 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-
-# Throw-away build stage to reduce size of final image
+# ========= build stage =========
 FROM base AS build
 
 # Install packages needed to build node modules
@@ -27,13 +26,31 @@ RUN npm ci
 # Copy application code
 COPY . .
 
+# ========= final stage =========
+FROM node:${NODE_VERSION}-slim
 
-# Final stage for app image
-FROM base
+# 安装 nginx 和 supervisor
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y nginx supervisor && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy built application
+WORKDIR /app
+
+# 从 build 阶段复制代码
 COPY --from=build /app /app
 
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD [ "node", "noname-server.js" ]
+# 把静态资源复制到 nginx 的 html 目录
+# 这里假设 index.html 在仓库根目录
+RUN cp /app/index.html /usr/share/nginx/html/
+# 如果还有 css/js/img 目录，请一并复制
+# RUN cp -r /app/public/* /usr/share/nginx/html/
+
+# 复制 nginx.conf & supervisord.conf（你需要在 repo 里提供这两个文件）
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# 暴露端口（nginx 会监听 8080）
+EXPOSE 8080
+
+# 启动 supervisor（同时跑 Node + Nginx）
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
