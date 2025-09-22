@@ -1,23 +1,11 @@
-{  
-  "version": 2,  
-  "builds": [  
-    {  
-      "src": "noname-server.js",  
-      "use": "@vercel/node"  
-    }  
-  ],  
-  "routes": [  
-    {  
-      "src": "/",  
-      "dest": "/index.html"  
-    },  
-    {  
-      "src": "/(checkFile|readFileAsText|writeFile|getFileList|checkDir|createDir|removeDir|removeFile)",  
-      "dest": "/noname-server.js"  
-    },  
-    {  
-      "src": "/(.*)",  
-      "dest": "/$1"  
-    }  
-  ]  
+{
+  "version": 2,
+  "builds": [
+    { "src": "noname-server.js", "use": "@vercel/node" },
+    { "src": "public/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/(checkFile|readFileAsText|writeFile|getFileList|checkDir|createDir|removeDir|removeFile)", "dest": "/noname-server.js" },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
 }
