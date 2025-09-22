@@ -1,0 +1,14 @@
+{  
+  "name": "noname-game",  
+  "version": "1.0.0",  
+  "description": "Noname card game server",  
+  "main": "noname-server.js",  
+  "dependencies": {  
+    "express": "^4.21.2",  
+    "minimist": "^1.2.8",  
+    "body-parser": "^1.20.3"  
+  },  
+  "engines": {  
+    "node": ">=18.x"  
+  }  
+}
