@@ -1,0 +1,3 @@
+[submodule "extension/decadeUI"]
+	path = extension/decadeUI
+	url = https://github.com/diandian157/decadeUI.git
